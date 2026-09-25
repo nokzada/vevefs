@@ -1,0 +1,7 @@
+# MTA PowerShell UI
+
+Este pacote deriva do RAR `INJETOR - MTA(1).rar`. A interface é `Iniciar.ps1`, com janela gráfica, executada por `Iniciar.vbs` sem abrir o console. O núcleo C++ permanece com o mesmo mecanismo `AutodialDLL` em `HKLM\\SYSTEM\\ControlSet001\\Services\\WinSock2\\Parameters` do original. O núcleo agora procura `sys32.dll` ao lado de `LoaderCore.exe`, inclui `shellapi.h`, remove a thread de título não encerrada e para de afirmar que a DLL foi carregada só porque a gravação no Registro retornou sucesso.
+
+Para compilar, envie o conteúdo do ZIP para a raiz de um repositório privado no GitHub, preservando `.github/workflows/build.yml`, `Core/Loader.cpp` e `Core/ObfuscatorStrings.h`. Em Actions, execute `Compilar loader PowerShell`. Baixe o artefato `LoaderPowerShell-x86`, extraia `LoaderPowerShell.zip`, coloque sua `sys32.dll` ao lado dos três arquivos e execute `Iniciar.vbs` no Windows. O Windows pedirá permissão de administrador para a configuração HKLM. O launcher aplica ExecutionPolicy Bypass somente ao processo PowerShell iniciado.
+
+**Limite:** sem a `sys32.dll` e sem testar no Windows, não é possível verificar se o jogo efetivamente carregou a DLL. O código original escreve um valor do Registro do sistema e o apaga mais tarde; uma interrupção pode deixá-lo alterado. Não use esse projeto em um sistema com um valor `AutodialDLL` preexistente que você precise preservar. A GUI informa a saída do núcleo, mas não substitui uma verificação do lado do jogo.
