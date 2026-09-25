@@ -1,1 +1,30 @@
+name: Compilar loader PowerShell
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - Core/Loader.cpp
+      - Core/ObfuscatorStrings.h
+      - .github/workflows/build.yml
+      - Iniciar.ps1
+      - Iniciar.vbs
+jobs:
+  build:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compilar nucleo x86
+        shell: cmd
+        run: |
+          call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x86
+          cl /nologo /std:c++17 /EHsc /W4 /DWIN32_LEAN_AND_MEAN /I Core Core\Loader.cpp /link /out:LoaderCore.exe shell32.lib advapi32.lib user32.lib
+      - name: Empacotar interface e nucleo
+        shell: pwsh
+        run: |
+          Compress-Archive -Path LoaderCore.exe,Iniciar.ps1,Iniciar.vbs -DestinationPath LoaderPowerShell.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: LoaderPowerShell-x86
+          path: LoaderPowerShell.zip
+          if-no-files-found: error
 
